@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Навігаційна панель -->
+    <!-- Навігаційна панель з логотипом -->
     <nav class="navbar navbar-light bg-white shadow-sm fixed-top">
         <div class="container-fluid px-4">
             <a class="navbar-brand logo" href="#">
@@ -90,7 +90,7 @@
         <div id="listingsContainer"></div>
     </div>
 
-    <!-- Модальне вікно -->
+    <!-- Модальне вікно для додавання оголошення -->
     <div class="modal fade" id="addListingModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -175,7 +175,7 @@
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Додаткова інформація</label>
-                                <textarea class="form-control custom-input" name="additional_info" rows="3"></textarea>
+                                <textarea class="form-control custom-input" name="additional_info" rows="3" placeholder="Вимоги до співмешканців, особливості квартири тощо"></textarea>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Телефон *</label>
@@ -194,7 +194,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary-custom" data-bs-dismiss="modal">Скасувати</button>
-                    <button type="button" class="btn btn-primary-custom" onclick="submitListing()">Опублікувати</button>
+                    <button type="button" class="btn btn-primary-custom" onclick="submitListingUpdated()">Опублікувати оголошення</button>
                 </div>
             </div>
         </div>
