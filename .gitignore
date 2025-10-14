@@ -1,0 +1,22 @@
+# Node modules (не додавати!)
+node_modules/
+npm-debug.log*
+package-lock.json
+
+# Environment variables (не додавати паролі!)
+.env
+.env.local
+
+# IDE/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temp files
+*.tmp
+*.log
