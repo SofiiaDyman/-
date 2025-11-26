@@ -14,22 +14,24 @@ if (!process.env.JWT_SECRET) {
 // ===== MIDDLEWARE =====
 
 // CORS - дозволяє frontend спілкуватися з backend
-// Дозволяємо різні джерела для розробки
-const allowedOrigins = process.env.CLIENT_ORIGIN 
-    ? process.env.CLIENT_ORIGIN.split(',')
-    : ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5500', 'http://localhost:5500', 'null'];
+const allowedOrigins = [ 
+    'http://localhost:5500'
+];
 
 app.use(cors({
     origin: function (origin, callback) {
-        // Дозволяємо запити без origin (наприклад, з Postman, Swagger)
-        if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes('null')) {
+        // Дозволяємо Postman/Swagger (без origin)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
-            callback(null, true); // Для розробки дозволяємо всі джерела
+            callback(new Error('CORS blocked by server'), false);
         }
     },
     credentials: true
 }));
+
 
 // Парсинг JSON даних з запитів
 app.use(bodyParser.json());

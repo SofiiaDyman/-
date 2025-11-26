@@ -77,42 +77,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-// ===== GET: ОТРИМАТИ ОДНЕ ОГОЛОШЕННЯ ПО ID =====
-
-/**
- * @swagger
- * /api/listings/{id}:
- *   get:
- *     summary: Отримати одне оголошення
- *     tags: [Listings]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Успішно знайдено
- *       404:
- *         description: Оголошення не знайдено
- */
-router.get('/:id', async (req, res) => {
-    try {
-        const [rows] = await db.query(
-            'SELECT * FROM listings WHERE id = ?',
-            [req.params.id]
-        );
-        if (rows.length === 0) {
-            return res.status(404).json({ error: 'Listing not found' });
-        }
-        res.json(rows[0]);
-    } catch (error) {
-        console.error('Помилка:', error);
-        res.status(500).json({ error: 'Database error' });
-    }
-});
-
 // ===== POST: ДОДАТИ НОВЕ ОГОЛОШЕННЯ =====
 
 /**
@@ -317,45 +281,57 @@ router.delete('/:id', async (req, res) => {
  *         name: price
  *         schema:
  *           type: number
- *         description: Максимальна ціна
+ *         description: Максимальна ціна (залиште порожнім, якщо не потрібно)
  *       - in: query
  *         name: district
  *         schema:
  *           type: string
- *         description: Район
+ *         description: Район (залиште порожнім, якщо не потрібно)
  *       - in: query
  *         name: faculty
  *         schema:
  *           type: string
- *         description: Факультет
+ *         description: Факультет (залиште порожнім, якщо не потрібно)
  *       - in: query
  *         name: gender
  *         schema:
  *           type: string
- *         description: Стать
+ *         description: Стать (залиште порожнім, якщо не потрібно)
  *     responses:
  *       200:
  *         description: Відфільтровані оголошення
- */
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Listing'
+ *     description: |
+ *       Для фільтрації оголошень у Swagger:
+ *       - Вводьте лише ті параметри, які хочете використати для фільтрації.
+ *       - Порожні поля (або не введені) ігноруються.
+ *       - Наприклад, якщо хочете фільтрувати лише за районом, введіть тільки district.
+ *       - Якщо хочете фільтрувати за ціною та факультетом — введіть price і faculty, інші залиште порожніми.
+*       - Повертається масив оголошень, якщо збігів немає — порожній масив.
+*/
 router.get('/filter', async (req, res) => {
     const { price, district, faculty, gender } = req.query;
-    
     let query = 'SELECT * FROM listings WHERE 1=1';
     const params = [];
 
-    if (price) {
+    if (price && price !== '' && !isNaN(Number(price))) {
         query += ' AND price <= ?';
-        params.push(price);
+        params.push(Number(price));
     }
-    if (district) {
+    if (district && district !== '') {
         query += ' AND district = ?';
         params.push(district);
     }
-    if (faculty) {
+    if (faculty && faculty !== '') {
         query += ' AND faculty = ?';
         params.push(faculty);
     }
-    if (gender) {
+    if (gender && gender !== '') {
         query += ' AND gender = ?';
         params.push(gender);
     }
@@ -367,6 +343,42 @@ router.get('/filter', async (req, res) => {
         res.json(rows);
     } catch (error) {
         console.error('Помилка фільтрації:', error);
+        res.status(500).json({ error: 'Database error' });
+    }
+});
+
+// ===== GET: ОТРИМАТИ ОДНЕ ОГОЛОШЕННЯ ПО ID =====
+
+/**
+ * @swagger
+ * /api/listings/{id}:
+ *   get:
+ *     summary: Отримати одне оголошення
+ *     tags: [Listings]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Успішно знайдено
+ *       404:
+ *         description: Оголошення не знайдено
+ */
+router.get('/:id', async (req, res) => {
+    try {
+        const [rows] = await db.query(
+            'SELECT * FROM listings WHERE id = ?',
+            [req.params.id]
+        );
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Listing not found' });
+        }
+        res.json(rows[0]);
+    } catch (error) {
+        console.error('Помилка:', error);
         res.status(500).json({ error: 'Database error' });
     }
 });
