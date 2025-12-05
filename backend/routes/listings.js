@@ -104,7 +104,7 @@ router.post('/', auth, async (req, res) => {
         additional_info, contact_phone, contact_telegram, contact_instagram
     } = req.body;
 
-    // Використовуємо ID користувача з токену (безпечніше, ніж приймати студентський id з клієнта)
+    // Використовуємо ID користувача з токену
     const student_id = `user_${req.user.id}`;
 
     // Валідація обов'язкових полів
@@ -119,12 +119,11 @@ router.post('/', auth, async (req, res) => {
             (student_id, gender, faculty, course, specialty, district, address, 
              rooms_count, people_count, price, utilities_included, additional_info, 
              contact_phone, contact_telegram, contact_instagram) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [student_id, gender, faculty, course, specialty, district, address,
              rooms_count, people_count, price, utilities_included || false,
-             additional_info, contact_phone, contact_telegram, contact_instagram]
+             additional_info || '', contact_phone, contact_telegram || '', contact_instagram || '']
         );
-        
         res.status(201).json({ 
             message: 'Listing created successfully', 
             id: result.insertId 
